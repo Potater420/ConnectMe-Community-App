@@ -1,34 +1,38 @@
 import 'package:connect_me_community_app/presentation/screens/home_screen.dart';
-import 'package:connect_me_community_app/presentation/screens/sign_up_screen.dart';
+import 'package:connect_me_community_app/presentation/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final RegExp emailRegExp = RegExp(r'^[\w.-]+@[\w.-]+\.\w+$');
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   bool _obsecureText = true;
+  bool _obsecureTextConfirm = true;
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Login Screen'), centerTitle: true),
+      appBar: AppBar(title: const Text('SignUp Screen'), centerTitle: true),
       body: Form(
         key: _formKey,
         child: Stack(
@@ -55,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: const BoxDecoration(
                     color: Colors.white, // needed, otherwise it's transparent
                     borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(35),
+                      top: Radius.circular(30),
                     ),
                   ),
                   child: SingleChildScrollView(
@@ -63,6 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       padding: const EdgeInsets.fromLTRB(20, 35, 20, 30),
                       child: Column(
                         children: [
+                          //email field
                           TextFormField(
                             controller: _emailController,
                             decoration: InputDecoration(
@@ -85,6 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                           ),
                           const SizedBox(height: 15),
+                          //password field
                           TextFormField(
                             obscureText: _obsecureText,
                             controller: _passwordController,
@@ -115,6 +121,42 @@ class _LoginScreenState extends State<LoginScreen> {
                               }
                               if (value.length < 6) {
                                 return 'Enter a Strong Password!';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 15),
+                          //CONFIRM password field
+                          TextFormField(
+                            obscureText: _obsecureTextConfirm,
+                            controller: _confirmPasswordController,
+                            decoration: InputDecoration(
+                              filled: true,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: BorderSide.none,
+                              ),
+                              labelText: 'Confirm Password',
+                              hintText: 'Re-enter your Password',
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _obsecureTextConfirm = !_obsecureTextConfirm;
+                                  });
+                                },
+                                icon: Icon(
+                                  _obsecureTextConfirm
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                ),
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please Confirm your Password';
+                              }
+                              if (value != _passwordController.text) {
+                                return 'Passwords do not match';
                               }
                               return null;
                             },
@@ -152,7 +194,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ),
                                 child: Text(
-                                  'LOG IN',
+                                  'SIGN UP',
                                   style: TextStyle(color: Colors.white),
                                 ),
                               ),
@@ -162,17 +204,17 @@ class _LoginScreenState extends State<LoginScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text("Don't have an Account?"),
+                              Text("Already have an Account?"),
                               TextButton(
                                 onPressed: () {
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => SignUpScreen(),
+                                      builder: (context) => LoginScreen(),
                                     ),
                                   );
                                 },
-                                child: Text('SIGN UP'),
+                                child: Text('LOG IN'),
                               ),
                             ],
                           ),
